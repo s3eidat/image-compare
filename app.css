@@ -1,0 +1,33 @@
+.ic-pick { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; }
+.ic-slot { position: relative; min-height: 120px; padding: 34px 14px 14px; }
+.ic-slot b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ic-slot.has-img { border-style: solid; }
+.ic-prev { max-height: 64px; max-width: 100%; border-radius: 6px; }
+.ic-tag { position: absolute; top: 10px; left: 12px; font-size: 11.5px; font-weight: 700; letter-spacing: .02em; padding: 2px 8px; border-radius: 999px; }
+.ic-tag.a { background: var(--accent-soft); color: var(--accent); }
+.ic-tag.b { background: var(--coffee-soft); color: var(--coffee); }
+.ic-swap { font-size: 18px; }
+@media (max-width: 600px) { .ic-pick { grid-template-columns: minmax(0, 1fr); } .ic-swap { justify-self: center; } }
+
+.ic-bar { gap: 12px; align-items: flex-end; }
+.ic-mini { width: 190px; gap: 2px; }
+.ic-mini output { color: var(--accent); font-weight: 600; }
+.ic-align { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); white-space: nowrap; }
+.ic-align .select { width: auto; }
+
+.ic-view { position: relative; height: min(560px, 64vh); min-height: 300px; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; display: flex; gap: 8px; touch-action: none; user-select: none; cursor: grab; }
+.ic-view:active { cursor: grabbing; }
+.ic-view:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ic-view.is-stack { flex-direction: column; }
+.ic-view canvas { display: block; flex: none; }
+.ic-view.is-side canvas { outline: 1px solid var(--line-strong); }
+.ic-lbl { position: absolute; top: 10px; padding: 3px 9px; border-radius: 999px; font: 600 11.5px/1.4 var(--font); background: rgba(0,0,0,.62); color: #fff; pointer-events: none; }
+.ic-lbl.l { left: 10px; }
+.ic-lbl.r { right: 10px; }
+.ic-lbl.r.side { right: auto; }
+.ic-empty { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; background: var(--surface); border: 0; }
+.ic-zoom { gap: 6px; }
+.ic-zv { min-width: 52px; text-align: center; font-size: 13px; }
+.ic-hint { font-size: 12.5px; }
+.ic-slot.has-img { grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-content: center; text-align: left; min-height: 0; padding: 38px 14px 12px; column-gap: 12px; row-gap: 0; }
+.ic-slot.has-img .ic-prev { grid-row: 1 / span 2; max-height: 48px; max-width: 86px; }

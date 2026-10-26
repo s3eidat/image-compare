@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Image Compare — Spot the Difference Between Two Images | S3eidat Tools</title>
+<meta name="description" content="Compare two images with a before/after slider, side by side, onion skin or a pixel-diff heatmap with threshold and changed-pixel count. Synced zoom and pan, export the diff. Free, private, nothing uploaded.">
+<meta property="og:title" content="Image Compare — free, private image diff">
+<meta property="og:description" content="Slider, side by side, onion skin and pixel-diff heatmap. Runs 100% in your browser.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/image-compare/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/image-compare/">
+<meta property="og:image" content="https://s3eidat.github.io/image-compare/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Image Compare — Spot the difference between two images">
+<meta name="twitter:description" content="Spot the difference between two images. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/image-compare/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Image Compare", "url": "https://s3eidat.github.io/image-compare/", "description": "Spot the difference between two images. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/image-compare/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="image-compare">
+<main class="s3-main">
+  <section class="s3-hero">
+    <h1>Image Compare</h1>
+    <p>Put two images next to each other and find what changed: drag a before/after slider, fade one over the other, or let a pixel-diff heatmap count every changed pixel. Your images stay in your browser.</p>
+  </section>
+
+  <section class="card stack">
+    <div class="ic-pick">
+      <label class="drop ic-slot" id="dropA">
+        <input type="file" accept="image/*" hidden>
+        <span class="ic-tag a">A · Before</span>
+        <img class="ic-prev" id="thumbA" alt="" hidden>
+        <b id="nameA">Drop image A</b>
+        <span class="faint" id="infoA">or click · paste fills the empty slot</span>
+      </label>
+      <button class="btn icon ic-swap" id="swap" title="Swap A and B" aria-label="Swap A and B" disabled>⇄</button>
+      <label class="drop ic-slot" id="dropB">
+        <input type="file" accept="image/*" hidden>
+        <span class="ic-tag b">B · After</span>
+        <img class="ic-prev" id="thumbB" alt="" hidden>
+        <b id="nameB">Drop image B</b>
+        <span class="faint" id="infoB">or click · drop two files at once to fill both</span>
+      </label>
+    </div>
+
+    <div class="row ic-bar">
+      <div class="seg" id="mode" role="group" aria-label="Compare mode">
+        <button aria-pressed="true" data-v="slider">Slider</button>
+        <button aria-pressed="false" data-v="side">Side by side</button>
+        <button aria-pressed="false" data-v="onion">Onion skin</button>
+        <button aria-pressed="false" data-v="diff">Difference</button>
+      </div>
+      <label class="field ic-mini" id="opWrap" hidden><span class="row between"><span>B opacity</span><output id="opV" class="mono">50%</output></span>
+        <input type="range" id="opacity" min="0" max="100" value="50"></label>
+      <label class="field ic-mini" id="thWrap" hidden><span class="row between"><span>Threshold</span><output id="thV" class="mono">0</output></span>
+        <input type="range" id="threshold" min="0" max="128" value="0"></label>
+      <span class="grow"></span>
+      <label class="ic-align">Different sizes
+        <select class="select" id="align">
+          <option value="tl">Align top-left</option>
+          <option value="center">Align centres</option>
+          <option value="stretch">Stretch B to A</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="ic-view checker" id="view" tabindex="0" aria-label="Comparison view. Drag to pan, scroll to zoom, plus and minus keys zoom, 0 fits.">
+      <canvas id="c1"></canvas>
+      <canvas id="c2" hidden></canvas>
+      <span class="ic-lbl l" id="lblL">A</span><span class="ic-lbl r" id="lblR">B</span>
+      <div class="empty ic-empty" id="empty"><b>Add two images</b>Screenshots, renders, photos: any two images. Different sizes are fine.</div>
+    </div>
+
+    <div class="row">
+      <div class="row ic-zoom">
+        <button class="btn small icon" id="zoomOut" aria-label="Zoom out">−</button>
+        <span class="mono ic-zv" id="zoomV">—</span>
+        <button class="btn small icon" id="zoomIn" aria-label="Zoom in">+</button>
+        <button class="btn small" id="fitBtn">Fit</button>
+        <button class="btn small" id="oneBtn">100%</button>
+      </div>
+      <span class="grow"></span>
+      <span class="faint ic-hint" id="hint">Drag to pan · scroll to zoom · views stay in sync</span>
+    </div>
+
+    <div class="stats" id="stats" hidden></div>
+    <div class="row">
+      <span class="chip" id="verdict" hidden></span>
+      <span class="grow"></span>
+      <button class="btn primary" id="export" disabled><svg class="i"><use href="#i-download"/></svg>Export diff image (PNG)</button>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
